@@ -141,7 +141,7 @@ app
             defaultId: 0,
             cancelId: 0,
           });
-          if (answer.response !== 1) return;
+          if (answer.response !== 1) fail("cancelled");
         }
         return controller.policy(id, { name, mode, allowed });
       },
