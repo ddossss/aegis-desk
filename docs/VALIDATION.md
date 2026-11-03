@@ -22,3 +22,18 @@ Electron automation checks real controls and file mutations, renderer Node isola
 GitHub Actions runs the same suite on Windows x64 and macOS, packages each target and cross-builds Windows ARM64. Consult the actual workflow results before treating a platform as tested. ARM64 Windows has no execution coverage in this workflow.
 
 No independent penetration test has been conducted. Initial distribution is not production-signed. See [SECURITY.md](../SECURITY.md) for boundaries and remaining risks.
+
+## 2026-11-03 results
+
+[Release validation run](https://github.com/ddossss/aegis-desk/actions/runs/41575081098), source `29918ccceb7a6009e9fe5ae50a0afe432d54afc7`:
+
+- All 33 core/contract tests passed on Windows Server 2025 x64 and macOS 26 ARM64.
+- Electron UI flows passed on both platforms, including actual OS encryption/decryption, renderer isolation, denied renderer networking, 18 language/page captures, change review, file application/restoration and pause persistence.
+- A separate normal-mode test injected only native dialog responses: cancelling a permission expansion preserved the original policy and accepting updated it. This is a main-process consent-handler test, not physical clicking of the OS dialog.
+- All 150 UI messages include Korean, Japanese and English translations. Source syntax/translation checks passed.
+- `npm audit --audit-level=moderate` reported zero known vulnerabilities for the locked development dependency tree at validation time. This is not a guarantee of vulnerability absence.
+- Windows x64, Windows ARM64 and macOS ARM64 distributions were built. Windows ARM64 is cross-built, not executed on an ARM PC.
+- The local Mac also completed the suite and real read-only Gatekeeper/firewall/FileVault queries. System settings were not changed.
+- No real provider API keys were supplied, so paid live Claude/Gemini/OpenAI requests remain unverified. Provider contract tests use controlled HTTP responses.
+
+Logs, screenshots and release artifacts are in the workflow artifacts and local `codex-work/2026-11-03-build/`. The source repository excludes all local state and generated artifacts.
