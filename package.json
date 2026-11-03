@@ -1,0 +1,23 @@
+{
+  "name": "aegis-desk",
+  "version": "0.1.0",
+  "description": "A personal AI workspace with explicit file permissions and local security checks.",
+  "private": true,
+  "type": "module",
+  "main": "app/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/*.test.mjs",
+    "test:ui": "node scripts/ui-test.mjs",
+    "check": "node scripts/check.mjs",
+    "package:mac": "node scripts/package.mjs darwin arm64",
+    "package:win": "node scripts/package.mjs win32 x64",
+    "package:win-arm64": "node scripts/package.mjs win32 arm64"
+  },
+  "devDependencies": {
+    "@electron/get": "5.0.0",
+    "@playwright/test": "1.64.1",
+    "electron": "45.2.1",
+    "prettier": "3.9.10"
+  }
+}

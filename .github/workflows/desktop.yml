@@ -1,0 +1,63 @@
+name: Desktop validation
+on:
+  push:
+    branches: [main]
+    paths:
+      [
+        "app/**",
+        "core/**",
+        "ui/**",
+        "tests/**",
+        "scripts/**",
+        "package*.json",
+        ".github/workflows/**",
+      ]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      ELECTRON_CACHE: ${{ github.workspace }}/codex-work/electron-cache
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: node node_modules/electron/install.js
+      - run: npm audit --audit-level=moderate
+      - run: npm run check
+      - run: npm test
+      - run: npm run test:ui
+      - run: node scripts/package.mjs ${{ matrix.platform }} ${{ matrix.arch }}
+      - if: runner.os == 'Windows'
+        run: node scripts/package.mjs win32 arm64
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: Aegis-Desk-${{ matrix.platform }}
+          path: |
+            codex-work/dist/*.zip
+            codex-work/dist/*.sha256
+          if-no-files-found: error
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: UI-evidence-${{ matrix.platform }}
+          path: |
+            codex-work/ui-*/*.png
+            codex-work/ui-*/result.txt
